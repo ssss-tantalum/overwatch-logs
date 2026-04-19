@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🔨 Overwatch Logs
 
-## Getting Started
+OTPのための戦績記録サイトです。  
+ランクの推移や、ルール, マップ別の勝率等を確認することができます。
 
-First, run the development server:
+## 技術スタック
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### FW
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Next.js 16
+    - SSG
+    - LocalStrage
+- TailwindCSS
+    - [Nord Color Pallete](https://www.nordtheme.com/docs/colors-and-palettes)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Deploy
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Github Pages
+- Github Actions
 
-## Learn More
+## ユーザーストーリー
 
-To learn more about Next.js, take a look at the following resources:
+### ページ
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- ダッシュボード
+    - プレイヤー名
+    - 使用ヒーロー
+    - シーズン
+        - シーズン目標勝利数
+            - 目標達成までに必要な勝利数
+    - 総試合数
+        - 勝利数
+        - 敗北数
+        - 勝率
+    - ランク推移
+        - グラフ
+        - 現在のランク
+        - 最高ランク
+    - ルール別勝率（DRAWを除外）
+    - マップ別勝率（DRAWを除外）
+        - 試合数が多いマップ上位5マップ
+    - 直近10試合の履歴
+        - 日付
+        - ルール
+        - マップ
+        - 結果
+            - VICTORY or DEFEAT or DRAW
+        - マッチ終了時点のランク
+- 統計
+    - ルール別
+        - 勝利数
+        - 敗北数
+        - 勝率（DRAWを除外）
+    - マップ別
+        - 勝利数
+        - 敗北数
+        - 勝率（DRAWを除外）
+- 履歴
+    - すべてのマッチの履歴
+        - 日付
+        - ルール
+        - マップ
+        - 結果
+            - VICTORY or DEFEAT or DRAW
+        - マッチ終了時点のランク
+- 初期設定
+    - プレイヤー名
+    - 使用ヒーロー
+    - 現在のシーズン
+    - シーズン目標勝利数
+    - 初期ランク（ティアとディビジョンをそれぞれセレクトボックスで入力）
+- 試合結果情報の追加(モーダル)
+    - 日付
+    - シーズン（初期設定から自動入力）
+    - ルール
+    - マップ
+    - 使用ヒーロー（初期設定から自動入力）
+    - 勝敗
+    - マッチ終了時点のランク（ティアとディビジョンをそれぞれセレクトボックスで入力）
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ユーザー
 
-## Deploy on Vercel
+- ユーザーはダッシュボードで自身の戦績を確認できる。コンパクトに纏めた情報を得るため。
+- ユーザーは統計で自身の戦績の統計を確認できる。戦績の詳細な情報を得るため。
+- ユーザーは履歴で自身の戦績の履歴を確認できる。過去の試合結果の情報を得るため。
+- ユーザーは初期設定でプレイヤー名・シーズン・目標勝利数・初期ランクを登録できる。戦績を正確に記録するため。
+- ユーザーはどのページにいても1試合の戦績を追加できる。試合結果を保存し、分析するため。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
