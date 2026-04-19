@@ -1,5 +1,6 @@
 "use client";
 
+import { MatchRowActions } from "../_components/MatchRowActions";
 import { useStore } from "../_components/StoreProvider";
 import { rankLabel } from "../_lib/data";
 
@@ -23,6 +24,7 @@ export default function HistoryPage() {
                   <th className="text-left py-2 font-medium">マップ</th>
                   <th className="text-center py-2 font-medium">結果</th>
                   <th className="text-right py-2 font-medium">ランク</th>
+                  <th className="py-2" />
                 </tr>
               </thead>
               <tbody>
@@ -55,6 +57,9 @@ export default function HistoryPage() {
                       </td>
                       <td className="py-2 text-nord6 text-right whitespace-nowrap">
                         {rankLabel(m.rank)}
+                      </td>
+                      <td className="py-2 text-right">
+                        <MatchRowActions match={m} />
                       </td>
                     </tr>
                   );

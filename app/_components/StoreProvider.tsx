@@ -19,12 +19,15 @@ interface StoreState {
   settings: Settings | null;
   matches: Match[];
   isModalOpen: boolean;
+  editingMatch: Match | null;
 }
 
 interface StoreActions {
   updateSettings: (s: Settings) => void;
   addMatch: (m: Match) => void;
-  openModal: () => void;
+  editMatch: (m: Match) => void;
+  deleteMatch: (id: string) => void;
+  openModal: (match?: Match) => void;
   closeModal: () => void;
 }
 
@@ -34,6 +37,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [matches, setMatches] = useState<Match[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingMatch, setEditingMatch] = useState<Match | null>(null);
 
   useEffect(() => {
     setSettings(loadSettings());
@@ -53,8 +57,31 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const openModal = useCallback(() => setIsModalOpen(true), []);
-  const closeModal = useCallback(() => setIsModalOpen(false), []);
+  const editMatch = useCallback((m: Match) => {
+    setMatches((prev) => {
+      const next = prev.map((x) => (x.id === m.id ? m : x));
+      saveMatches(next);
+      return next;
+    });
+  }, []);
+
+  const deleteMatch = useCallback((id: string) => {
+    setMatches((prev) => {
+      const next = prev.filter((x) => x.id !== id);
+      saveMatches(next);
+      return next;
+    });
+  }, []);
+
+  const openModal = useCallback((match?: Match) => {
+    setEditingMatch(match ?? null);
+    setIsModalOpen(true);
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingMatch(null);
+  }, []);
 
   return (
     <StoreContext.Provider
@@ -62,8 +89,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         settings,
         matches,
         isModalOpen,
+        editingMatch,
         updateSettings,
         addMatch,
+        editMatch,
+        deleteMatch,
         openModal,
         closeModal,
       }}

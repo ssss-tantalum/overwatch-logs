@@ -6,8 +6,17 @@ import type { Division, Match, MatchResult, Rule, Tier } from "../_types";
 import { useStore } from "./StoreProvider";
 
 export default function MatchModal() {
-  const { isModalOpen, closeModal, settings, matches, addMatch } = useStore();
+  const {
+    isModalOpen,
+    closeModal,
+    settings,
+    matches,
+    addMatch,
+    editMatch,
+    editingMatch,
+  } = useStore();
 
+  const isEditing = editingMatch !== null;
   const today = new Date().toISOString().split("T")[0];
   const lastRank =
     matches.length > 0 ? matches[0].rank : settings?.initialRank;
@@ -17,40 +26,51 @@ export default function MatchModal() {
   const [map, setMap] = useState(MAPS_BY_RULE["Control"][0]);
   const [result, setResult] = useState<MatchResult>("VICTORY");
   const [tier, setTier] = useState<Tier>(lastRank?.tier ?? "Gold");
-  const [division, setDivision] = useState<Division>(
-    lastRank?.division ?? 1
-  );
+  const [division, setDivision] = useState<Division>(lastRank?.division ?? 1);
 
   useEffect(() => {
     if (!isModalOpen) return;
-    const r =
-      matches.length > 0 ? matches[0].rank : settings?.initialRank;
-    setDate(new Date().toISOString().split("T")[0]);
-    setRule("Control");
-    setMap(MAPS_BY_RULE["Control"][0]);
-    setResult("VICTORY");
-    setTier(r?.tier ?? "Gold");
-    setDivision(r?.division ?? 1);
+    if (editingMatch) {
+      setDate(editingMatch.date);
+      setRule(editingMatch.rule);
+      setMap(editingMatch.map);
+      setResult(editingMatch.result);
+      setTier(editingMatch.rank.tier);
+      setDivision(editingMatch.rank.division);
+    } else {
+      const r =
+        matches.length > 0 ? matches[0].rank : settings?.initialRank;
+      setDate(new Date().toISOString().split("T")[0]);
+      setRule("Control");
+      setMap(MAPS_BY_RULE["Control"][0]);
+      setResult("VICTORY");
+      setTier(r?.tier ?? "Gold");
+      setDivision(r?.division ?? 1);
+    }
   }, [isModalOpen]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    setMap(MAPS_BY_RULE[rule]?.[0] ?? "");
-  }, [rule]);
+    if (!isEditing) setMap(MAPS_BY_RULE[rule]?.[0] ?? "");
+  }, [rule]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!isModalOpen) return null;
 
   const handleSubmit = () => {
     if (!settings) return;
     const match: Match = {
-      id: Date.now().toString(),
+      id: editingMatch?.id ?? Date.now().toString(),
       date,
-      season: settings.season,
+      season: editingMatch?.season ?? settings.season,
       rule,
       map,
       result,
       rank: { tier, division },
     };
-    addMatch(match);
+    if (isEditing) {
+      editMatch(match);
+    } else {
+      addMatch(match);
+    }
     closeModal();
   };
 
@@ -62,7 +82,9 @@ export default function MatchModal() {
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
       <div className="bg-nord1 rounded-xl w-full max-w-md p-6 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-nord6 font-semibold text-lg">試合を追加</h2>
+          <h2 className="text-nord6 font-semibold text-lg">
+            {isEditing ? "試合を編集" : "試合を追加"}
+          </h2>
           <button
             onClick={closeModal}
             className="text-nord4 hover:text-nord6 cursor-pointer"
@@ -75,7 +97,7 @@ export default function MatchModal() {
           <div>
             <p className={labelCls}>シーズン</p>
             <p className="text-nord6 text-sm bg-nord2 border border-nord3 rounded-lg px-3 py-2">
-              Season {settings?.season ?? "-"}
+              Season {editingMatch?.season ?? settings?.season ?? "-"}
             </p>
           </div>
           <div>
@@ -168,7 +190,7 @@ export default function MatchModal() {
               onChange={(e) =>
                 setDivision(Number(e.target.value) as Division)
               }
-              className="w-20 bg-nord2 border border-nord3 rounded-lg px-3 py-2 text-nord6 text-sm focus:outline-none focus:border-nord8"
+              className="w-20 bg-nord2 border border-nord3 rounded-lg px-3 py-2 text-nord6 text-sm focus:outline-none focus:border-nord8 shrink-0"
             >
               {DIVISIONS.map((d) => (
                 <option key={d} value={d}>
@@ -184,7 +206,7 @@ export default function MatchModal() {
           disabled={!settings}
           className="w-full bg-nord10 hover:bg-nord9 disabled:opacity-50 text-nord6 font-medium py-2.5 rounded-lg transition-colors cursor-pointer"
         >
-          記録する
+          {isEditing ? "更新する" : "記録する"}
         </button>
 
         {!settings && (

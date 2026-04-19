@@ -34,7 +34,7 @@ export default function Nav() {
         ))}
       </div>
       <button
-        onClick={openModal}
+        onClick={() => openModal()}
         className="bg-nord10 hover:bg-nord9 text-nord6 text-sm font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer"
       >
         + 試合を追加

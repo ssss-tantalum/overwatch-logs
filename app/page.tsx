@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { MatchRowActions } from "./_components/MatchRowActions";
 import { useStore } from "./_components/StoreProvider";
 import { rankLabel, rankToNumber, TIERS } from "./_lib/data";
 import type { Match } from "./_types";
@@ -303,6 +304,7 @@ export default function DashboardPage() {
               <span className="text-nord6 text-xs w-24 text-right shrink-0">
                 {rankLabel(m.rank)}
               </span>
+              <MatchRowActions match={m} />
             </div>
           ))}
           {recent10.length === 0 && <p className={muted}>試合記録なし</p>}
