@@ -142,7 +142,9 @@ function ResultBadge({ result }: { result: Match["result"] }) {
 }
 
 export default function DashboardPage() {
-  const { settings, matches } = useStore();
+  const { settings, matches, isLoaded } = useStore();
+
+  if (!isLoaded) return null;
 
   if (!settings) {
     return (

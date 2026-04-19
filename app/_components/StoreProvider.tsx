@@ -18,6 +18,7 @@ import {
 interface StoreState {
   settings: Settings | null;
   matches: Match[];
+  isLoaded: boolean;
   isModalOpen: boolean;
   editingMatch: Match | null;
 }
@@ -36,12 +37,14 @@ const StoreContext = createContext<(StoreState & StoreActions) | null>(null);
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [matches, setMatches] = useState<Match[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
 
   useEffect(() => {
     setSettings(loadSettings());
     setMatches(loadMatches());
+    setIsLoaded(true);
   }, []);
 
   const updateSettings = useCallback((s: Settings) => {
@@ -88,6 +91,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       value={{
         settings,
         matches,
+        isLoaded,
         isModalOpen,
         editingMatch,
         updateSettings,
