@@ -76,6 +76,55 @@ function RankGraph({ matches }: { matches: Match[] }) {
   );
 }
 
+function SeasonGoalBar({
+  wins,
+  losses,
+  draws,
+  goal,
+}: {
+  wins: number;
+  losses: number;
+  draws: number;
+  goal: number;
+}) {
+  const total = Math.max(wins + losses + draws, goal);
+  const remaining = Math.max(goal - wins, 0);
+  const toPercent = (n: number) => `${(n / total) * 100}%`;
+
+  const segments = [
+    { value: wins, color: "#A3BE8C", label: `勝利 ${wins}` },
+    { value: losses, color: "#BF616A", label: `敗北 ${losses}` },
+    { value: draws, color: "#EBCB8B", label: `引分 ${draws}` },
+    { value: remaining, color: "#434C5E", label: `残り ${remaining}` },
+  ].filter((s) => s.value > 0);
+
+  return (
+    <div className="space-y-2">
+      <div className="flex h-6 rounded-lg overflow-hidden gap-px">
+        {segments.map((s) => (
+          <div
+            key={s.label}
+            style={{ width: toPercent(s.value), backgroundColor: s.color }}
+            title={s.label}
+            className="transition-all duration-500"
+          />
+        ))}
+      </div>
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
+        {segments.map((s) => (
+          <span key={s.label} className="flex items-center gap-1.5 text-xs text-nord4">
+            <span
+              className="inline-block w-2.5 h-2.5 rounded-sm shrink-0"
+              style={{ backgroundColor: s.color }}
+            />
+            {s.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ResultBadge({ result }: { result: Match["result"] }) {
   const cls =
     result === "VICTORY"
@@ -155,7 +204,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* ヘッダー */}
       <div className={card}>
-        <div className="flex items-start justify-between flex-wrap gap-3">
+        <div className="flex items-start justify-between flex-wrap gap-3 mb-4">
           <div>
             <h1 className="text-xl font-bold text-nord6">
               {settings.playerName}
@@ -176,6 +225,12 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
+        <SeasonGoalBar
+          wins={wins}
+          losses={losses}
+          draws={seasonMatches.filter((m) => m.result === "DRAW").length}
+          goal={settings.seasonGoalWins}
+        />
       </div>
 
       {/* 基本統計 */}
