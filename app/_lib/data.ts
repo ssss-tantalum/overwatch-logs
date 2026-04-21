@@ -18,11 +18,11 @@ export const RULES = ["Control", "Flashpoint", "Escort", "Hybrid", "Push"] as co
 export const MAPS_BY_RULE: Record<string, string[]> = {
   Control: [
     "Antarctic Peninsula",
+    "Busan",
     "Ilios",
     "Lijiang Tower",
     "Nepal",
     "Oasis",
-    "Runasapi",
     "Samoa",
   ],
   Escort: [
